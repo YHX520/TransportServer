@@ -1,12 +1,15 @@
-package com.huaxuan.imageserver;
+package com.huaxuan.imageserver.controller;
 
 
 import com.huaxuan.imageserver.Msm.CHttpPost;
 import com.huaxuan.imageserver.Msm.ConfigManager;
 import com.huaxuan.imageserver.Msm.Message;
+import com.huaxuan.imageserver.dao.PhoneValidateMapper;
+import com.huaxuan.imageserver.dataMode.PhoneValidate;
 import com.huaxuan.imageserver.logtool.L;
 import com.huaxuan.imageserver.unit.SystemParameter;
 import okhttp3.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,14 +44,19 @@ public class MsmController {
     String pwd="j27WoR";
     boolean isenpwd=false;
 
-    @RequestMapping(value = "/getMsm", method = RequestMethod.GET)
-    public String getValidateMsm(String Phone) {
-        initOkhttp();
+    @Autowired
+    private PhoneValidateMapper phoneValidateMapper;
 
+    @RequestMapping(value = "/getMsm", method = RequestMethod.GET)
+    public String getValidateMsm(String phoneNumber) {
+        initOkhttp();
+        phoneNumber="15016850420";
+        PhoneValidate phoneValidate=phoneValidateMapper.selectPhoneAndValidate(phoneNumber);
+        System.out.println(phoneValidate.toString());
 
       // singleSend(userid,pwd,isenpwd,Phone);
 
-        return "succes";
+        return phoneValidate.getValidatenumber();
 
 
     }

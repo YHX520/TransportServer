@@ -1,4 +1,4 @@
-package com.huaxuan.imageserver;
+package com.huaxuan.imageserver.controller;
 
 
 import com.huaxuan.imageserver.logtool.L;

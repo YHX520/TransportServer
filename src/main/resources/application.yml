@@ -2,17 +2,15 @@ server:
   port: 8080
 spring:
   datasource:
-    url: mysql://127.0.0.1:3306/transport
+    url: jdbc:mysql://localhost:3306/transport
     username: root
-    password: 12345678
-    driver-class-name: com.mysql.jdbc.Driver
-    ma
-   tomcat:
-      max-idle: 10
-      max-wait: 10000
-      min-idle: 5
-      initial-size: 5
-      max-active:
+    password: "12345678"
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+mybatis:
+  check-config-location: true
+  mapper-locations: classpath:mybatis/mapper/*xml
+  config-location: classpath:mybatis/mybatis-config.xml
 
 
 
