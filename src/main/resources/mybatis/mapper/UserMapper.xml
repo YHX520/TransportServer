@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.huaxuan.imageserver.dao.UserMapper">
+  <resultMap id="BaseResultMap" type="com.huaxuan.imageserver.datamode.User">
+    <id column="userId" jdbcType="CHAR" property="userid" />
+    <result column="userName" jdbcType="VARCHAR" property="username" />
+    <result column="userPassword" jdbcType="CHAR" property="userpassword" />
+    <result column="headImage" jdbcType="CHAR" property="headimage" />
+    <result column="payPassword" jdbcType="CHAR" property="paypassword" />
+    <result column="price" jdbcType="INTEGER" property="price" />
+    <result column="realStatust" jdbcType="INTEGER" property="realstatust" />
+    <result column="userType" jdbcType="INTEGER" property="usertype" />
+    <result column="realName" jdbcType="VARCHAR" property="realname" />
+    <result column="phoneNumber" jdbcType="CHAR" property="phonenumber" />
+    <result column="token" jdbcType="CHAR" property="token" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    userId, userName, userPassword, headImage, payPassword, price, realStatust, userType, 
+    realName, phoneNumber, token
+  </sql>
+
+  <sql id="phoneNumber_List">
+    phoneNumber
+  </sql>
+
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user
+    where userId = #{userid,jdbcType=CHAR}
+  </select>
+  <select id="selectByPhoneNumber" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="phoneNumber_List" />
+    from user
+    where phoneNumber= #{phoneNumber,jdbcType=CHAR}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from user
+    where userId = #{userid,jdbcType=CHAR}
+  </delete>
+  <insert id="insert" parameterType="com.huaxuan.imageserver.datamode.User">
+    insert into user (userId, userName, userPassword, 
+      headImage, payPassword, price, 
+      realStatust, userType, realName, 
+      phoneNumber, token)
+    values (#{userid,jdbcType=CHAR}, #{username,jdbcType=VARCHAR}, #{userpassword,jdbcType=CHAR}, 
+      #{headimage,jdbcType=CHAR}, #{paypassword,jdbcType=CHAR}, #{price,jdbcType=INTEGER}, 
+      #{realstatust,jdbcType=INTEGER}, #{usertype,jdbcType=INTEGER}, #{realname,jdbcType=VARCHAR}, 
+      #{phonenumber,jdbcType=CHAR}, #{token,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.huaxuan.imageserver.datamode.User">
+    insert into user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userid != null">
+        userId,
+      </if>
+      <if test="username != null">
+        userName,
+      </if>
+      <if test="userpassword != null">
+        userPassword,
+      </if>
+      <if test="headimage != null">
+        headImage,
+      </if>
+      <if test="paypassword != null">
+        payPassword,
+      </if>
+      <if test="price != null">
+        price,
+      </if>
+      <if test="realstatust != null">
+        realStatust,
+      </if>
+      <if test="usertype != null">
+        userType,
+      </if>
+      <if test="realname != null">
+        realName,
+      </if>
+      <if test="phonenumber != null">
+        phoneNumber,
+      </if>
+      <if test="token != null">
+        token,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userid != null">
+        #{userid,jdbcType=CHAR},
+      </if>
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="userpassword != null">
+        #{userpassword,jdbcType=CHAR},
+      </if>
+      <if test="headimage != null">
+        #{headimage,jdbcType=CHAR},
+      </if>
+      <if test="paypassword != null">
+        #{paypassword,jdbcType=CHAR},
+      </if>
+      <if test="price != null">
+        #{price,jdbcType=INTEGER},
+      </if>
+      <if test="realstatust != null">
+        #{realstatust,jdbcType=INTEGER},
+      </if>
+      <if test="usertype != null">
+        #{usertype,jdbcType=INTEGER},
+      </if>
+      <if test="realname != null">
+        #{realname,jdbcType=VARCHAR},
+      </if>
+      <if test="phonenumber != null">
+        #{phonenumber,jdbcType=CHAR},
+      </if>
+      <if test="token != null">
+        #{token,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.huaxuan.imageserver.datamode.User">
+    update user
+    <set>
+      <if test="username != null">
+        userName = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="userpassword != null">
+        userPassword = #{userpassword,jdbcType=CHAR},
+      </if>
+      <if test="headimage != null">
+        headImage = #{headimage,jdbcType=CHAR},
+      </if>
+      <if test="paypassword != null">
+        payPassword = #{paypassword,jdbcType=CHAR},
+      </if>
+      <if test="price != null">
+        price = #{price,jdbcType=INTEGER},
+      </if>
+      <if test="realstatust != null">
+        realStatust = #{realstatust,jdbcType=INTEGER},
+      </if>
+      <if test="usertype != null">
+        userType = #{usertype,jdbcType=INTEGER},
+      </if>
+      <if test="realname != null">
+        realName = #{realname,jdbcType=VARCHAR},
+      </if>
+      <if test="phonenumber != null">
+        phoneNumber = #{phonenumber,jdbcType=CHAR},
+      </if>
+      <if test="token != null">
+        token = #{token,jdbcType=CHAR},
+      </if>
+    </set>
+    where userId = #{userid,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.huaxuan.imageserver.datamode.User">
+    update user
+    set userName = #{username,jdbcType=VARCHAR},
+      userPassword = #{userpassword,jdbcType=CHAR},
+      headImage = #{headimage,jdbcType=CHAR},
+      payPassword = #{paypassword,jdbcType=CHAR},
+      price = #{price,jdbcType=INTEGER},
+      realStatust = #{realstatust,jdbcType=INTEGER},
+      userType = #{usertype,jdbcType=INTEGER},
+      realName = #{realname,jdbcType=VARCHAR},
+      phoneNumber = #{phonenumber,jdbcType=CHAR},
+      token = #{token,jdbcType=CHAR}
+    where userId = #{userid,jdbcType=CHAR}
+  </update>
+
+</mapper>

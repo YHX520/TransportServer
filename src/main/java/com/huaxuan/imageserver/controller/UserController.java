@@ -1,12 +1,11 @@
 package com.huaxuan.imageserver.controller;
 
 import com.huaxuan.imageserver.dao.UserMapper;
-import com.huaxuan.imageserver.dataMode.User;
+import com.huaxuan.imageserver.datamode.User;
 import com.huaxuan.imageserver.logtool.L;
 import com.huaxuan.imageserver.unit.MyNameString;
 import com.huaxuan.imageserver.unit.NetStatust;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,7 +29,7 @@ public class UserController {
         user.setUserid(map.get("userId").toString());
         user.setPhonenumber(map.get("phoneNumber").toString());
         if(userMapper.selectByPrimaryKey(user.getUserid())!=null){
-
+            return NetStatust.EXIST;
         }
         user.setUserpassword(map.get("password").toString());
         user.setHeadimage(MyNameString.getImage());
@@ -39,6 +38,7 @@ public class UserController {
         try {
             userMapper.insert(user);
         }catch (Exception e){
+            e.printStackTrace();
             return NetStatust.ERROR;
         }
 

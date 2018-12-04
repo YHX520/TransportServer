@@ -1,4 +1,4 @@
-package com.huaxuan.imageserver.dataMode;
+package com.huaxuan.imageserver.datamode;
 
 import java.util.Date;
 

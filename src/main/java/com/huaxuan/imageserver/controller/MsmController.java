@@ -5,7 +5,7 @@ import com.huaxuan.imageserver.dao.UserMapper;
 import com.huaxuan.imageserver.msm.CHttpPost;
 import com.huaxuan.imageserver.msm.Message;
 import com.huaxuan.imageserver.dao.PhoneValidateMapper;
-import com.huaxuan.imageserver.dataMode.PhoneValidate;
+import com.huaxuan.imageserver.datamode.PhoneValidate;
 import com.huaxuan.imageserver.unit.NetStatust;
 import com.huaxuan.imageserver.unit.SystemParameter;
 import okhttp3.*;
@@ -79,7 +79,7 @@ public class MsmController {
             if (new Date().getTime() - phoneValidate.getDate().getTime() < 50000) {
 
                //操作太频繁
-               return "operate is frequently";
+               return NetStatust.TIMES_IS_FREQUENTLY;
             }
             phoneValidate.setValidatenumber(validateNumber);
             phoneValidate.setDate(new Date());
@@ -92,7 +92,7 @@ public class MsmController {
 
        // singleSend(userid, pwd, isenpwd, phoneNumber, validateNumber);
 
-        return "success";
+        return NetStatust.SUCCESS;
 
 
     }
