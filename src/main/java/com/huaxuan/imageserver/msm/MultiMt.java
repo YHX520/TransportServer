@@ -1,4 +1,4 @@
-package com.huaxuan.imageserver.Msm;
+package com.huaxuan.imageserver.msm;
 
 /**
  * @功能概要：个性化信息详情类

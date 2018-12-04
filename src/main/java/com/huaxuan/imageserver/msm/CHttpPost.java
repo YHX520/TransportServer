@@ -1,4 +1,4 @@
-package com.huaxuan.imageserver.Msm;
+package com.huaxuan.imageserver.msm;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;

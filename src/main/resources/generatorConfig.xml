@@ -40,13 +40,22 @@
         </javaClientGenerator>
 
         <!-- 手机验证码检验表 -->
-        <table schema="transport" tableName="temp_phone_validate" domainObjectName="PhoneValidate"
+        <!--<table schema="transport" tableName="temp_phone_validate" domainObjectName="PhoneValidate"-->
+               <!--enableCountByExample="false"-->
+               <!--enableUpdateByExample="false"-->
+               <!--enableDeleteByExample="false"-->
+               <!--enableSelectByExample="false"-->
+               <!--selectByExampleQueryId="false">-->
+        <!--</table>-->
+        <table schema="transport" tableName="user" domainObjectName="User"
                enableCountByExample="false"
                enableUpdateByExample="false"
                enableDeleteByExample="false"
                enableSelectByExample="false"
                selectByExampleQueryId="false">
         </table>
+
+
 
     </context>
 </generatorConfiguration>

@@ -1,12 +1,12 @@
 package com.huaxuan.imageserver.controller;
 
 
-import com.huaxuan.imageserver.Msm.CHttpPost;
-import com.huaxuan.imageserver.Msm.ConfigManager;
-import com.huaxuan.imageserver.Msm.Message;
+import com.huaxuan.imageserver.dao.UserMapper;
+import com.huaxuan.imageserver.msm.CHttpPost;
+import com.huaxuan.imageserver.msm.Message;
 import com.huaxuan.imageserver.dao.PhoneValidateMapper;
 import com.huaxuan.imageserver.dataMode.PhoneValidate;
-import com.huaxuan.imageserver.logtool.L;
+import com.huaxuan.imageserver.unit.NetStatust;
 import com.huaxuan.imageserver.unit.SystemParameter;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.SimpleFormatter;
+
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 public class MsmController {
@@ -40,26 +40,88 @@ public class MsmController {
     RequestBody requestBody;
     Request request;
     Call call;
-    String userid="E105FJ";
-    String pwd="j27WoR";
-    boolean isenpwd=false;
+    String userid = "E105FJ";
+    String pwd = "j27WoR";
+    boolean isenpwd = false;
 
     @Autowired
-    private PhoneValidateMapper phoneValidateMapper;
+    PhoneValidateMapper phoneValidateMapper;
+    @Autowired
+    UserMapper userMapper;
 
-    @RequestMapping(value = "/getMsm", method = RequestMethod.GET)
-    public String getValidateMsm(String phoneNumber) {
-        initOkhttp();
-        phoneNumber="15016850420";
-        PhoneValidate phoneValidate=phoneValidateMapper.selectPhoneAndValidate(phoneNumber);
-        System.out.println(phoneValidate.toString());
+    @RequestMapping(value = "/getMsm", method = {RequestMethod.POST})
+    public String getValidateMsm(String phoneNumber, String token) {
+        if (!"12345678".equals(token)) {
+            return NetStatust.ERROR;
+        }
+        if (phoneNumber.length() != 11) {
+            return NetStatust.ERROR;
+        }
 
-      // singleSend(userid,pwd,isenpwd,Phone);
+        if(userMapper.selectByPhoneNumber(phoneNumber)!=null){
+            return NetStatust.EXIST;
+        }
 
-        return phoneValidate.getValidatenumber();
+        //获取随机验证码，基于时间戳
+        String validateNumber = Long.toString(System.currentTimeMillis()).substring(8);
+
+        PhoneValidate phoneValidate = phoneValidateMapper.selectPhoneAndValidate(phoneNumber);
+        //建立PhoneNumber对象，并设置值
+        if (phoneValidate == null) {
+            phoneValidate = new PhoneValidate();
+            phoneValidate.setPhonenumber(phoneNumber);
+            phoneValidate.setValidatenumber(validateNumber);
+            phoneValidate.setDate(new Date());
+            phoneValidate.setStatus((byte) 1);
+            phoneValidateMapper.insert(phoneValidate);
+        } else {
+            //判断时间请求间隔
+            if (new Date().getTime() - phoneValidate.getDate().getTime() < 50000) {
+
+               //操作太频繁
+               return "operate is frequently";
+            }
+            phoneValidate.setValidatenumber(validateNumber);
+            phoneValidate.setDate(new Date());
+            phoneValidate.setStatus((byte) 1);
+            phoneValidateMapper.updateByPrimaryKey(phoneValidate);
+        }
+
+
+        System.out.println(validateNumber);
+
+       // singleSend(userid, pwd, isenpwd, phoneNumber, validateNumber);
+
+        return "success";
 
 
     }
+
+    @RequestMapping(value = "/validateMsm",method = RequestMethod.POST)
+    public String validateMsm(String phoneNumber,String validateNumber,String token){
+        if("12345678".equals(token)){
+            PhoneValidate phoneValidate=phoneValidateMapper.selectPhoneAndValidate(phoneNumber);
+            if(phoneValidate!=null){
+                if(new Date().getTime()-phoneValidate.getDate().getTime()>600000){
+                    return NetStatust.TIME_OUT;
+                }else{
+                    if(phoneValidate.getValidatenumber().equals(validateNumber)){
+                        return NetStatust.SUCCESS;
+                    }else{
+                        return NetStatust.ERROR;
+                    }
+                }
+
+            }
+
+
+
+        }
+
+        return NetStatust.ERROR;
+
+    }
+
 
     public void initOkhttp() {
         if (okHttpClient == null) {
@@ -74,7 +136,7 @@ public class MsmController {
 
     }
 
-    public static void singleSend(String userid, String pwd, boolean isEncryptPwd,String PhoneNumber,String validateNumber) {
+    public static void singleSend(String userid, String pwd, boolean isEncryptPwd, String phoneNumber, String validateNumber) {
         SimpleDateFormat sdf = new SimpleDateFormat("MMddHHmmss");
         try {
             // 参数类
@@ -103,13 +165,13 @@ public class MsmController {
             }
 
             // 设置手机号码 此处只能设置一个手机号码
-            message.setMobile("18024367645");
+            message.setMobile(phoneNumber);
             // 设置内容
-            message.setContent("您在帮运APP注册的验证码是2315，在10分钟内有效。如非本人操作请忽略本短信。");
+            message.setContent("您在帮运APP注册的验证码是" + validateNumber + "，在10分钟内有效。如非本人操作请忽略本短信。");
             // 设置扩展号
-            message.setExno("11");
+            message.setExno(Long.toString(System.currentTimeMillis()).substring(5));
             // 用户自定义流水编号
-            message.setCustid("2016092919495055");
+            message.setCustid(Long.toString(System.currentTimeMillis()).substring(4));
             // 自定义扩展数据
             //业务类型
             message.setSvrtype("90885");
@@ -124,7 +186,6 @@ public class MsmController {
             // result为0:成功;非0:失败
             if (result == 0) {
                 System.out.println("单条发送提交成功！");
-
                 System.out.println(msgId.toString());
 
             } else {
